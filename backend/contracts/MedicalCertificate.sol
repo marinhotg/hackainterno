@@ -24,11 +24,14 @@ contract MedicalCertificate is AccessControl {
         uint date;
         string referenceUrl;
         uint256 certificateId;
+        string ipfsHash;
         // falta indentificacao do medico
     }
 
     mapping(uint256 => Certificate) public certificates;
     mapping(uint256 => Patient) public patients;
+    mapping(uint256 => string) public certificateIPFSHashes;
+
     uint256 public nextCertificateId;
     uint256 public nextPatientId;
 
@@ -43,14 +46,15 @@ contract MedicalCertificate is AccessControl {
         nextPatientId++;
     }
 
-    function addCertificate(string memory _description, uint _date, string memory _referenceUrl, uint256 _patientId) public {
+    function addCertificate(string memory _description, uint _date, string memory _referenceUrl, uint256 _patientId, string memory _ipfsHash) public {
         //require(hasRole(DOCTOR_ROLE, msg.sender), "Restricted to doctors");
         uint256 certificateId = nextCertificateId;
         certificates[certificateId] = Certificate({
             description: _description,
             date: _date,
             referenceUrl: _referenceUrl,
-            certificateId: certificateId
+            certificateId: certificateId,
+            ipfsHash: _ipfsHash
         });
 
         patients[_patientId].patientMCIds.push(certificateId);
