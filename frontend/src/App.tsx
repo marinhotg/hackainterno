@@ -17,40 +17,34 @@ export function App() {
   const [patientName, setPatientName] = useState('');
   const [certificateDescription, setCertificateDescription] = useState('');
   const [certificateDate, setCertificateDate] = useState('');
-  const [file, setFile] = useState(null);
+  const [fileImg, setFileImg] = useState<File | null>(null);
 
-  const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
-  };
+  const sendFileToIPFS = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const handleUpload = async () => {
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
+    if (fileImg) {
+      try {
+        const formData = new FormData();
+        formData.append('file', fileImg);
 
-      const pinataResponse = await axios.post('https://api.pinata.cloud/pinning/pinFileToIPFS', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'pinata_api_key': '14a3acc6d1ea9b622ce5',  
-          'pinata_secret_api_key': '27b299567068aa16c86ae9225c6a87146da14f5e87a4fc710d8b159d350586a5'  
-        }
-      });
+        const resFile = await axios({
+          method: 'post',
+          url: 'https://api.pinata.cloud/pinning/pinFileToIPFS',
+          data: formData,
+          headers: {
+            'pinata_api_key': '14a3acc6d1ea9b622ce5',
+            'pinata_secret_api_key': '27b299567068aa16c86ae9225c6a87146da14f5e87a4fc710d8b159d350586a5',
+            'Content-Type': 'multipart/form-data',
+          },
+        });
 
-      const ipfsHash = pinataResponse.data.IpfsHash;
+        const ImgHash = `ipfs://${resFile.data.IpfsHash}`;
+        console.log(ImgHash);
 
-      const certificateData = {
-        patientName,
-        certificateDescription,
-        certificateDate,
-        ipfsHash,
-      };
-
-      await axios.post('', certificateData);
-
-      alert('Atestado adicionado com sucesso!');
-    } catch (error) {
-      console.error('Erro ao realizar o upload do atestado:', error);
-      alert('Erro ao realizar o upload do atestado.');
+      } catch (error) {
+        console.log('Error sending File to IPFS: ');
+        console.error(error);
+      }
     }
   };
 
@@ -59,12 +53,12 @@ export function App() {
       <CssBaseline />
       <AppBar position="sticky" sx={{ backgroundColor: 'primary' }}>
         <Toolbar>
-          <Typography variant="h6" component="div"  sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Wagmi + RainbowKit + Vite
           </Typography>
         </Toolbar>
       </AppBar>
-      <Container sx={{ mt: 4 }} >
+      <Container sx={{ mt: 4 }}>
         <Paper elevation={3} sx={{ p: 4 }}>
           <Typography variant="h5" gutterBottom color="primary">
             Emitir Atestado
@@ -89,21 +83,23 @@ export function App() {
             type="date"
             sx={{
               '& input': {
-                  minHeight: '4em', 
-                  display: 'flex',
+                minHeight: '4em',
+                display: 'flex',
               },
             }}
             value={certificateDate}
             onChange={(e) => setCertificateDate(e.target.value)}
           />
-          <label>
-            Selecione o arquivo do atestado:
-            <input type="file" onChange={handleFileChange} />
-          </label>
-          <br />
-          <Button variant="contained" color="primary" onClick={handleUpload}>
-            Adicionar Atestado
-          </Button>
+          <form onSubmit={sendFileToIPFS}>
+            <label>
+              Selecione o arquivo do atestado:
+              <input type="file" onChange={(e) => setFileImg(e.target.files?.[0] || null)} required />
+            </label>
+            <br />
+            <Button variant="contained" color="primary" type="submit">
+              Adicionar Atestado
+            </Button>
+          </form>
         </Paper>
       </Container>
     </div>
