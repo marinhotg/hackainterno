@@ -17,16 +17,16 @@ export function App() {
   return (
     <div style={{ backgroundColor: theme.palette.background.default, height: '100vh' }}>
       <CssBaseline />
-      <AppBar position="sticky" sx={{ backgroundColor: theme.palette.background.default }}>
+      <AppBar position="sticky" sx={{ backgroundColor: 'primary' }}>
         <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" component="div"  sx={{ flexGrow: 1 }}>
             Wagmi + RainbowKit + Vite
           </Typography>
         </Toolbar>
       </AppBar>
-      <Container sx={{ mt: 4 }}>
+      <Container sx={{ mt: 4 }} >
         <Paper elevation={3} sx={{ p: 4 }}>
-          <Typography variant="h5" gutterBottom>
+          <Typography variant="h5" gutterBottom color="primary">
             Emitir Atestado
           </Typography>
           <TextField
