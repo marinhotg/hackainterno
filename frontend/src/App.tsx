@@ -10,7 +10,14 @@ import {
   Paper,
   TextField,
   Button,
+  InputAdornment, 
+  IconButton
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+
+interface ApiResponse {
+  data: Blob;
+}
 
 export function App() {
   const theme = useTheme();
@@ -18,6 +25,9 @@ export function App() {
   const [certificateDescription, setCertificateDescription] = useState('');
   const [certificateDate, setCertificateDate] = useState('');
   const [fileImg, setFileImg] = useState<File | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResult, setSearchResult] = useState<ApiResponse | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const sendFileToIPFS = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,6 +57,22 @@ export function App() {
       }
     }
   };
+
+  const handleSearch = async () => {
+    try {
+      setLoading(true);
+
+      // URL da Api
+      const apiUrl = `url-da-api?q=${searchTerm}`;
+      const response = await axios.get(apiUrl);
+
+        setSearchResult({ data: response.data });
+      }  catch (error) {
+      console.error('Erro na requisição:', error);
+    } finally {
+      setLoading(false);
+    } }
+  
 
   return (
     <div style={{ backgroundColor: theme.palette.background.default, height: '100vh' }}>
@@ -100,6 +126,38 @@ export function App() {
               Adicionar Atestado
             </Button>
           </form>
+        </Paper>
+      </Container>
+
+      <Container  sx={{ mt: 4 }}>
+        <Paper elevation={3} sx={{ p: 4 }}>
+        <Typography variant="h5" gutterBottom color="primary">
+            Atestados
+          </Typography>
+        
+          <TextField
+        type="text"
+        label="Pesquisar Atestados"
+        fullWidth
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton onClick={handleSearch}>
+                <SearchIcon />
+              </IconButton>
+            </InputAdornment> ), 
+            }}
+      />
+       {searchResult && (
+        <Paper elevation={3} style={{ marginTop: '20px', padding: '15px' }}>
+          <Typography variant="h5" gutterBottom color="primary">
+            Resultados da busca:
+          </Typography>
+        
+        </Paper>
+      )}
         </Paper>
       </Container>
     </div>
