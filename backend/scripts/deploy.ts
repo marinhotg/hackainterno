@@ -4,39 +4,26 @@ import path from "path";
 import { Contract } from "ethers";
 
 export async function main() {
-    const erc20Factory = await ethers.getContractFactory("MockERC20");
+    const mCFactory = await ethers.getContractFactory("MedicalCertificate");
 
-    const erc20 = await erc20Factory.deploy("Mock ERC20 Token", "MOCK", 18);
+    const medicalCertificate = await mCFactory.deploy();
 
-    console.log("Mock ERC20 Token deployed to:", erc20.address);
+    console.log("MedicalCertificate deployed to:", medicalCertificate.address);
 
-    const vaultFactory = await ethers.getContractFactory("Vault");
-
-    const vault = await vaultFactory.deploy(erc20.address);
-
-    console.log("Vault deployed to:", vault.address);
-
-    saveFrontendFiles([vault, erc20], ["Vault", "MockERC20"]);
-
-    return { erc20, vault }
+    saveFrontendFiles(medicalCertificate, "MedicalCertificate");
 }
 
-function saveFrontendFiles(contracts: Contract[], names: string[]) {
+function saveFrontendFiles(contract: Contract, name: string) {
 	const contractsDir = path.join(__dirname, "..", "..", "frontend", "src", "contracts");
   
 	if (!fs.existsSync(contractsDir)) {
     fs.mkdirSync(contractsDir);
 	}
-
-  const result = []
-  for (var i = 0; i < names.length; i++) {
-    const ContractArtifact = artifacts.readArtifactSync(names[i]);
-    result.push({ address: contracts[i].address, abi: ContractArtifact.abi })
-  }
+  const ContractArtifact = artifacts.readArtifactSync(name);
   
 	fs.writeFileSync(
     path.join(contractsDir, "contract-config.json"),
-    JSON.stringify(result, undefined, 2)
+    JSON.stringify({ address: contract.address, abi: ContractArtifact.abi }, undefined, 2)
 	);
 }
 

@@ -10,7 +10,7 @@ import {
   Paper,
   TextField,
   Button,
-  InputAdornment, 
+  InputAdornment,
   IconButton
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -66,21 +66,22 @@ export function App() {
       const apiUrl = `url-da-api?q=${searchTerm}`;
       const response = await axios.get(apiUrl);
 
-        setSearchResult({ data: response.data });
-      }  catch (error) {
+      setSearchResult({ data: response.data });
+    } catch (error) {
       console.error('Erro na requisição:', error);
     } finally {
       setLoading(false);
-    } }
-  
+    }
+  }
+
 
   return (
     <div style={{ backgroundColor: theme.palette.background.default, height: '100vh' }}>
       <CssBaseline />
       <AppBar position="sticky" sx={{ backgroundColor: 'primary' }}>
         <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Wagmi + RainbowKit + Vite
+          <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
+            TrustMed
           </Typography>
         </Toolbar>
       </AppBar>
@@ -92,6 +93,7 @@ export function App() {
           <TextField
             label="Paciente"
             fullWidth
+            sx={{ mb: 2 }}
             value={patientName}
             onChange={(e) => setPatientName(e.target.value)}
           />
@@ -100,6 +102,7 @@ export function App() {
             fullWidth
             multiline
             rows={4}
+            sx={{ mb: 2 }}
             value={certificateDescription}
             onChange={(e) => setCertificateDescription(e.target.value)}
           />
@@ -129,35 +132,35 @@ export function App() {
         </Paper>
       </Container>
 
-      <Container  sx={{ mt: 4 }}>
+      <Container sx={{ mt: 4 }}>
         <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h5" gutterBottom color="primary">
+          <Typography variant="h5" gutterBottom color="primary">
             Atestados
           </Typography>
-        
+
           <TextField
-        type="text"
-        label="Pesquisar Atestados"
-        fullWidth
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton onClick={handleSearch}>
-                <SearchIcon />
-              </IconButton>
-            </InputAdornment> ), 
+            type="text"
+            label="Pesquisar Atestados"
+            fullWidth
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleSearch}>
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>),
             }}
-      />
-       {searchResult && (
-        <Paper elevation={3} style={{ marginTop: '20px', padding: '15px' }}>
-          <Typography variant="h5" gutterBottom color="primary">
-            Resultados da busca:
-          </Typography>
-        
-        </Paper>
-      )}
+          />
+          {searchResult && (
+            <Paper elevation={3} style={{ marginTop: '20px', padding: '15px' }}>
+              <Typography variant="h5" gutterBottom color="primary">
+                Resultados da busca:
+              </Typography>
+
+            </Paper>
+          )}
         </Paper>
       </Container>
     </div>
