@@ -15,7 +15,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 )
 
 const { connectors } = getDefaultWallets({
-  appName: 'web3-template',
+  appName: 'TrustMed',
   chains,
   projectId: walletConnectProjectId,
 })

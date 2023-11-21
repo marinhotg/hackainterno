@@ -13,6 +13,7 @@ contract MedicalCertificate is Ownable {
     struct Doctor {
         string name;
         uint crm;
+        address doctorAddress;
     }
 
     struct Certificate {
@@ -21,12 +22,12 @@ contract MedicalCertificate is Ownable {
         string referenceUrl;
         uint256 certificateId;
         string ipfsHash;
-        // falta indentificacao do medico
     }
 
     mapping(uint256 => Certificate) public certificates;
     mapping(uint256 => Patient) public patients;
     mapping(uint256 => string) public certificateIPFSHashes;
+    mapping(address => Doctor) public doctors;
 
     uint256 public nextCertificateId;
     uint256 public nextPatientId;
@@ -42,6 +43,18 @@ contract MedicalCertificate is Ownable {
         nextPatientId++;
     }
 
+    function addDoctor(
+        string memory _name,
+        uint _crm,
+        address _doctorAddress
+    ) public onlyOwner {
+        doctors[_doctorAddress] = Doctor({
+            name: _name,
+            crm: _crm,
+            doctorAddress: _doctorAddress
+        });
+    }
+
     function addCertificate(
         string memory _description,
         uint _date,
@@ -49,6 +62,7 @@ contract MedicalCertificate is Ownable {
         uint256 _patientId,
         string memory _ipfsHash
     ) public {
+        //require(doctors[msg.sender].doctorAddress == msg.sender, "Somente medicos podem adicionar certificados.");
         uint256 certificateId = nextCertificateId;
         certificates[certificateId] = Certificate({
             description: _description,
@@ -82,5 +96,54 @@ contract MedicalCertificate is Ownable {
         uint256 _patientId
     ) public view returns (string memory) {
         return patients[_patientId].name;
+    }
+
+    function removeCertificate(uint256 _certificateId) public onlyOwner {
+        require(
+            certificates[_certificateId].certificateId == _certificateId,
+            "Atestado nao encontrado"
+        );
+
+        uint256 patientId = findPatientByCertificateId(_certificateId);
+
+        removeCertificateFromPatient(_certificateId, patientId);
+
+        delete certificateIPFSHashes[_certificateId];
+        delete certificates[_certificateId];
+    }
+
+    function findPatientByCertificateId(
+        uint256 _certificateId
+    ) internal view returns (uint256) {
+        for (
+            uint256 i = 0;
+            i < patients[nextPatientId].patientMCIds.length;
+            i++
+        ) {
+            if (patients[nextPatientId].patientMCIds[i] == _certificateId) {
+                return nextPatientId;
+            }
+        }
+        revert("Paciente nao encontrado para o atestado");
+    }
+
+    function removeCertificateFromPatient(
+        uint256 _certificateId,
+        uint256 _patientId
+    ) internal {
+        uint256[] storage patientCertificates = patients[_patientId]
+            .patientMCIds;
+
+        for (uint256 i = 0; i < patientCertificates.length; i++) {
+            if (patientCertificates[i] == _certificateId) {
+                patientCertificates[i] = patientCertificates[
+                    patientCertificates.length - 1
+                ];
+                patientCertificates.pop();
+                return;
+            }
+        }
+
+        revert("Atestado nao encontrado para o paciente");
     }
 }
