@@ -1,3 +1,4 @@
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useState } from 'react';
 import axios from 'axios';
 import {
@@ -13,6 +14,7 @@ import {
   InputAdornment,
   IconButton
 } from '@mui/material';
+import { Address, useAccount, useContractRead } from "wagmi";
 import SearchIcon from '@mui/icons-material/Search';
 
 interface ApiResponse {
@@ -20,6 +22,7 @@ interface ApiResponse {
 }
 
 export function App() {
+  const { isConnected, address } = useAccount();
   const theme = useTheme();
   const [patientName, setPatientName] = useState('');
   const [certificateDescription, setCertificateDescription] = useState('');
@@ -83,53 +86,55 @@ export function App() {
           <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
             TrustMed
           </Typography>
+          <ConnectButton />
         </Toolbar>
       </AppBar>
       <Container sx={{ mt: 4 }}>
-        <Paper elevation={3} sx={{ p: 4 }}>
-          <Typography variant="h5" gutterBottom color="primary">
-            Emitir Atestado
-          </Typography>
-          <TextField
-            label="Paciente"
-            fullWidth
-            sx={{ mb: 2 }}
-            value={patientName}
-            onChange={(e) => setPatientName(e.target.value)}
-          />
-          <TextField
-            label="Descrição"
-            fullWidth
-            multiline
-            rows={4}
-            sx={{ mb: 2 }}
-            value={certificateDescription}
-            onChange={(e) => setCertificateDescription(e.target.value)}
-          />
-          <TextField
-            label="Data"
-            fullWidth
-            type="date"
-            sx={{
-              '& input': {
-                minHeight: '4em',
-                display: 'flex',
-              },
-            }}
-            value={certificateDate}
-            onChange={(e) => setCertificateDate(e.target.value)}
-          />
-          <form onSubmit={sendFileToIPFS}>
-            <label>
-              Selecione o arquivo do atestado:
-              <input type="file" onChange={(e) => setFileImg(e.target.files?.[0] || null)} required />
-            </label>
-            <br />
-            <Button variant="contained" color="primary" type="submit">
-              Adicionar Atestado
-            </Button>
-          </form>
-        </Paper>
+        {isConnected && (
+          <Paper elevation={3} sx={{ p: 4 }}>
+            <Typography variant="h5" gutterBottom color="primary">
+              Emitir Atestado
+            </Typography>
+            <TextField
+              label="Paciente"
+              fullWidth
+              sx={{ mb: 2 }}
+              value={patientName}
+              onChange={(e) => setPatientName(e.target.value)}
+            />
+            <TextField
+              label="Descrição"
+              fullWidth
+              multiline
+              rows={4}
+              sx={{ mb: 2 }}
+              value={certificateDescription}
+              onChange={(e) => setCertificateDescription(e.target.value)}
+            />
+            <TextField
+              label="Data"
+              fullWidth
+              type="date"
+              sx={{
+                '& input': {
+                  minHeight: '4em',
+                  display: 'flex',
+                },
+              }}
+              value={certificateDate}
+              onChange={(e) => setCertificateDate(e.target.value)}
+            />
+            <form onSubmit={sendFileToIPFS}>
+              <label>
+                Selecione o arquivo do atestado:
+                <input type="file" onChange={(e) => setFileImg(e.target.files?.[0] || null)} required />
+              </label>
+              <br />
+              <Button variant="contained" color="primary" type="submit">
+                Adicionar Atestado
+              </Button>
+            </form>
+          </Paper>)}
       </Container>
 
       <Container sx={{ mt: 4 }}>
