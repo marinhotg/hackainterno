@@ -26,7 +26,7 @@ export function App() {
   const [certificateDescription, setCertificateDescription] = useState('');
   const [certificateDate, setCertificateDate] = useState('');
   const [fileImg, setFileImg] = useState<File | null>(null);
-  const [fileUploaded, setFileUploaded] = useState(false);    // ele tem que ser posto no momento em que eu sei que meu contrato foi escrito
+  const [fileUploaded, setFileUploaded] = useState(false);   
   const [certificateHash, setcertificateHash] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResult, setSearchResult] = useState<any>(null);
@@ -97,6 +97,20 @@ export function App() {
     watch: true
   })
 
+  const wipeForms = () => {
+    setPatientName('');
+    setCertificateDescription('');
+    setCertificateDate('');
+    setFileImg(null);
+    setFileUploaded(true);
+  };
+
+  useEffect(() => {
+    if (!waitCertificate.isLoading && waitCertificate.isLoading !== undefined) {
+      wipeForms();
+    }
+  }, [waitCertificate.isLoading]);
+  
 
   return (
     <div style={{ backgroundColor: theme.palette.background.default, height: '100vh' }}>
@@ -154,7 +168,7 @@ export function App() {
                 Adicionar Atestado
               </LoadingButton>
             </form>
-            {fileUploaded && (
+            {fileUploaded && certificateHash &&  (
               <Typography variant="body1" sx={{ mt: 2 }}>
                 Link para acessar o atestado:{' '}
                 <Link href={`https://ipfs.io/ipfs/${certificateHash}`} target="_blank" rel="noopener">
