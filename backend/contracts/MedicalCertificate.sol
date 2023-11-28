@@ -84,13 +84,13 @@ contract MedicalCertificate is Ownable {
                     abi.encodePacked(
                         "Nome do Paciente: ",
                         certificates[i].patientName,
-                        "\n",
+                        "<br>",
                         "Descricao: ",
                         certificates[i].description,
-                        "\n",
+                        "<br>",
                         "Endereco do Doutor: ",
                         addressToString(certificates[i].doctorAddress),
-                        "\n",
+                        "<br>",
                         "IPFS Hash: ",
                         certificates[i].ipfsHash
                     )
