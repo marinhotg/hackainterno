@@ -10,16 +10,14 @@ import {
   Container,
   Paper,
   TextField,
-  Button,
   InputAdornment,
-  IconButton
+  IconButton,
+  Link
 } from '@mui/material';
-import { Address, useAccount, useContractRead } from "wagmi";
+import contractConfig from './contracts/contract-config.json'
+import { Address, useAccount, useContractRead, useContractWrite, useWaitForTransaction } from "wagmi";
 import SearchIcon from '@mui/icons-material/Search';
-
-interface ApiResponse {
-  data: Blob;
-}
+import LoadingButton from '@mui/lab/LoadingButton'
 
 export function App() {
   const { isConnected, address } = useAccount();
@@ -28,9 +26,10 @@ export function App() {
   const [certificateDescription, setCertificateDescription] = useState('');
   const [certificateDate, setCertificateDate] = useState('');
   const [fileImg, setFileImg] = useState<File | null>(null);
+  const [fileUploaded, setFileUploaded] = useState(false);
+  const [certificateHash, setcertificateHash] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResult, setSearchResult] = useState<ApiResponse | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [searchResult, setSearchResult] = useState<any>(null);
 
   const sendFileToIPFS = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,10 +49,13 @@ export function App() {
             'Content-Type': 'multipart/form-data',
           },
         });
+        setcertificateHash(`${resFile.data.IpfsHash}`);
+        console.log("esse eh o hash do certificado: ", certificateHash);
 
-        const ImgHash = `ipfs://${resFile.data.IpfsHash}`;
-        console.log(ImgHash);
-
+        certificateWrite.write({
+          args: [patientName, certificateDescription, certificateHash],
+        })
+        setFileUploaded(true); // ta chegando antes da hora
       } catch (error) {
         console.log('Error sending File to IPFS: ');
         console.error(error);
@@ -63,20 +65,45 @@ export function App() {
 
   const handleSearch = async () => {
     try {
-      setLoading(true);
-
-      // URL da Api
-      const apiUrl = `url-da-api?q=${searchTerm}`;
-      const response = await axios.get(apiUrl);
-
-      setSearchResult({ data: response.data });
+      const result = await certificateData.data;
+      setSearchResult(result);
+      console.log('esse eh a lista de certificados: \n', nextCertificateID.data?.toString());
     } catch (error) {
-      console.error('Erro na requisição:', error);
-    } finally {
-      setLoading(false);
+      console.error('Error searching certificates:', error);
     }
-  }
+  };
 
+  const certificateWrite = useContractWrite({
+    address: contractConfig.address as Address,
+    abi: contractConfig.abi,
+    functionName: 'addCertificate',
+    onError(error) {
+      console.log('Erro ao chamar a funcao')
+      console.error(error)
+    },
+    onSuccess(data) {
+      console.log('Deu certo!')
+    },
+  })
+
+  const waitCertificate = useWaitForTransaction({ hash: certificateWrite.data?.hash })
+
+
+  const nextCertificateID = useContractRead({
+    address: contractConfig.address as Address,
+    abi: contractConfig.abi,
+    functionName: 'listCertificates',
+    args: [],
+    watch: true
+  })
+
+  const certificateData = useContractRead({
+    address: contractConfig.address as Address,
+    abi: contractConfig.abi,
+    functionName: 'getCertificateByIpfsHash',
+    args: [searchTerm],
+    watch: true
+  })
 
   return (
     <div style={{ backgroundColor: theme.palette.background.default, height: '100vh' }}>
@@ -130,10 +157,18 @@ export function App() {
                 <input type="file" onChange={(e) => setFileImg(e.target.files?.[0] || null)} required />
               </label>
               <br />
-              <Button variant="contained" color="primary" type="submit">
+              <LoadingButton loading={waitCertificate.isLoading} variant="contained" color="primary" type="submit">
                 Adicionar Atestado
-              </Button>
+              </LoadingButton>
             </form>
+            {fileUploaded && (
+              <Typography variant="body1" sx={{ mt: 2 }}>
+                Link para acessar o atestado:{' '}
+                <Link href={`https://ipfs.io/ipfs/${certificateHash}`} target="_blank" rel="noopener">
+                  https://ipfs.io/ipfs/{certificateHash}
+                </Link>
+              </Typography>
+            )}
           </Paper>)}
       </Container>
 
@@ -163,7 +198,9 @@ export function App() {
               <Typography variant="h5" gutterBottom color="primary">
                 Resultados da busca:
               </Typography>
-
+              <Typography>
+                {searchResult}
+              </Typography>
             </Paper>
           )}
         </Paper>
