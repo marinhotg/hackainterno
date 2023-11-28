@@ -1,5 +1,5 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
   AppBar,
@@ -26,7 +26,7 @@ export function App() {
   const [certificateDescription, setCertificateDescription] = useState('');
   const [certificateDate, setCertificateDate] = useState('');
   const [fileImg, setFileImg] = useState<File | null>(null);
-  const [fileUploaded, setFileUploaded] = useState(false);
+  const [fileUploaded, setFileUploaded] = useState(false);    // ele tem que ser posto no momento em que eu sei que meu contrato foi escrito
   const [certificateHash, setcertificateHash] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResult, setSearchResult] = useState<any>(null);
@@ -50,18 +50,20 @@ export function App() {
           },
         });
         setcertificateHash(`${resFile.data.IpfsHash}`);
-        console.log("esse eh o hash do certificado: ", certificateHash);
-
-        certificateWrite.write({
-          args: [patientName, certificateDescription, certificateHash],
-        })
-        setFileUploaded(true); // ta chegando antes da hora
       } catch (error) {
         console.log('Error sending File to IPFS: ');
         console.error(error);
       }
     }
   };
+
+  useEffect(() => {
+    if (certificateHash) {
+      certificateWrite.write({
+        args: [patientName, certificateDescription, certificateHash],
+      });
+    }
+  }, [certificateHash]);
 
   const handleSearch = async () => {
     try {
