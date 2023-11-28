@@ -97,6 +97,7 @@ export function App() {
     watch: true
   })
 
+
   return (
     <div style={{ backgroundColor: theme.palette.background.default, height: '100vh' }}>
       <CssBaseline />
@@ -190,9 +191,7 @@ export function App() {
               <Typography variant="h5" gutterBottom color="primary">
                 Resultados da busca:
               </Typography>
-              <Typography>
-                {searchResult}
-              </Typography>
+              <Typography dangerouslySetInnerHTML={{ __html: searchResult }} />
             </Paper>
           )}
         </Paper>
