@@ -69,7 +69,6 @@ export function App() {
     try {
       const result = await certificateData.data;
       setSearchResult(result);
-      console.log('esse eh a lista de certificados: \n', nextCertificateID.data?.toString());
     } catch (error) {
       console.error('Error searching certificates:', error);
     }
@@ -89,15 +88,6 @@ export function App() {
   })
 
   const waitCertificate = useWaitForTransaction({ hash: certificateWrite.data?.hash })
-
-
-  const nextCertificateID = useContractRead({
-    address: contractConfig.address as Address,
-    abi: contractConfig.abi,
-    functionName: 'listCertificates',
-    args: [],
-    watch: true
-  })
 
   const certificateData = useContractRead({
     address: contractConfig.address as Address,

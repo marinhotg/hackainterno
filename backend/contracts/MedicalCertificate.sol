@@ -116,65 +116,16 @@ contract MedicalCertificate is Ownable {
             result[3 + i * 2] = hexChars[uint8(addressBytes[i] & 0x0f)];
         }
 
-        return string(result);
-    }
-
-    function listCertificates() public view returns (string[] memory) {
-        string[] memory certificateList = new string[](nextCertificateId - 1);
-
-        for (uint256 i = 1; i < nextCertificateId; i++) {
-            if (certificates[i].certificateId != 0) {
-                string memory certificateString = string(
-                    abi.encodePacked(
-                        "ID do Certificado: ",
-                        uintToString(certificates[i].certificateId),
-                        "\n",
-                        "Nome do Paciente: ",
-                        certificates[i].patientName,
-                        "\n",
-                        "Descricao: ",
-                        certificates[i].description,
-                        "\n",
-                        "Endereco do Doutor: ",
-                        addressToString(certificates[i].doctorAddress),
-                        "\n",
-                        "IPFS Hash: ",
-                        certificates[i].ipfsHash
-                    )
-                );
-                certificateList[i - 1] = certificateString;
-            }
+        uint256 startIndex = 2;
+        while (startIndex < result.length - 1 && result[startIndex] == "0") {
+            startIndex++;
         }
 
-        return certificateList;
-    }
-
-    function uintToString(
-        uint256 _value
-    ) internal pure returns (string memory) {
-        if (_value == 0) {
-            return "0";
+        bytes memory trimmedResult = new bytes(result.length - startIndex);
+        for (uint256 j = 0; j < trimmedResult.length; j++) {
+            trimmedResult[j] = result[startIndex + j];
         }
 
-        uint256 temp = _value;
-        uint256 digits;
-
-        while (temp != 0) {
-            temp /= 10;
-            digits++;
-        }
-
-        bytes memory buffer = new bytes(digits);
-        while (_value != 0) {
-            digits -= 1;
-            buffer[digits] = bytes1(uint8(48 + (_value % 10)));
-            _value /= 10;
-        }
-
-        return string(buffer);
-    }
-
-    function getNextCertificateId() public view returns (uint256) {
-        return nextCertificateId;
+        return string(trimmedResult);
     }
 }
