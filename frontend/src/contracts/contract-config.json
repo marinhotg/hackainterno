@@ -2,6 +2,11 @@
   "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
   "abi": [
     {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
       "anonymous": false,
       "inputs": [
         {
@@ -24,23 +29,13 @@
       "inputs": [
         {
           "internalType": "string",
-          "name": "_description",
+          "name": "_patientName",
           "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_date",
-          "type": "uint256"
         },
         {
           "internalType": "string",
-          "name": "_referenceUrl",
+          "name": "_description",
           "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_patientId",
-          "type": "uint256"
         },
         {
           "internalType": "string",
@@ -59,9 +54,19 @@
           "internalType": "string",
           "name": "_name",
           "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_crm",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_doctorAddress",
+          "type": "address"
         }
       ],
-      "name": "addPatient",
+      "name": "addDoctor",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -97,23 +102,23 @@
       "outputs": [
         {
           "internalType": "string",
-          "name": "description",
+          "name": "patientName",
           "type": "string"
         },
         {
-          "internalType": "uint256",
-          "name": "date",
-          "type": "uint256"
-        },
-        {
           "internalType": "string",
-          "name": "referenceUrl",
+          "name": "description",
           "type": "string"
         },
         {
           "internalType": "uint256",
           "name": "certificateId",
           "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "doctorAddress",
+          "type": "address"
         },
         {
           "internalType": "string",
@@ -127,44 +132,27 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "_patientId",
-          "type": "uint256"
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         }
       ],
-      "name": "getPatientCertificates",
+      "name": "doctors",
       "outputs": [
         {
-          "components": [
-            {
-              "internalType": "string",
-              "name": "description",
-              "type": "string"
-            },
-            {
-              "internalType": "uint256",
-              "name": "date",
-              "type": "uint256"
-            },
-            {
-              "internalType": "string",
-              "name": "referenceUrl",
-              "type": "string"
-            },
-            {
-              "internalType": "uint256",
-              "name": "certificateId",
-              "type": "uint256"
-            },
-            {
-              "internalType": "string",
-              "name": "ipfsHash",
-              "type": "string"
-            }
-          ],
-          "internalType": "struct MedicalCertificate.Certificate[]",
-          "name": "",
-          "type": "tuple[]"
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "crm",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "doctorAddress",
+          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -173,17 +161,43 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "_patientId",
-          "type": "uint256"
+          "internalType": "string",
+          "name": "_ipfsHash",
+          "type": "string"
         }
       ],
-      "name": "getPatientName",
+      "name": "getCertificateByIpfsHash",
       "outputs": [
         {
           "internalType": "string",
           "name": "",
           "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getNextCertificateId",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "listCertificates",
+      "outputs": [
+        {
+          "internalType": "string[]",
+          "name": "",
+          "type": "string[]"
         }
       ],
       "stateMutability": "view",
@@ -232,24 +246,13 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "",
+          "name": "_certificateId",
           "type": "uint256"
         }
       ],
-      "name": "patients",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "name",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "patientId",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
+      "name": "removeCertificate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {

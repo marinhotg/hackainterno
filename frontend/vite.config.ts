@@ -4,7 +4,7 @@ import { defineConfig } from 'vite'
 // https://vitejs.dev/config/
 export default defineConfig({
   define: {
-    // global: 'globalThis',
+    //global: 'globalThis',
     // CHANGE BETWEEN THIS TO DECLARATIONS. BELOW IS FOR BUILD/DEPLOY
     global: (() => {
       let globalVariable = 'globalThis';
