@@ -1,9 +1,5 @@
 # Frontend
 
-This is the front, here you can develop, test and deploy you website with connection to chains and smart contracts already configured.
-
-> Note that this file is not going to explain or teach anything related to Vite, wagmi or any tools used, it only explains how to use this preconfigured model
-
 > Obs.: Every time we give you a command, consider that you gotta run it in a terminal which is **inside** this /frontend directory. If any command needs to be runned in a diferent folder it'll be **explicitly** said.
 
 ## First steps
