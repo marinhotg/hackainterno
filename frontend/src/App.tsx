@@ -26,10 +26,10 @@ export function App() {
   const [certificateDescription, setCertificateDescription] = useState('');
   const [certificateDate, setCertificateDate] = useState('');
   const [fileImg, setFileImg] = useState<File | null>(null);
-  const [fileUploaded, setFileUploaded] = useState(false);   
   const [certificateHash, setcertificateHash] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResult, setSearchResult] = useState<any>(null);
+  const [fileReady, setFileReady] = useState(false);   
 
   const sendFileToIPFS = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,7 +83,8 @@ export function App() {
       console.error(error)
     },
     onSuccess(data) {
-      console.log('Deu certo!')
+      console.log('Deu certo!', data)
+      setFileReady(true)
     },
   })
 
@@ -102,7 +103,6 @@ export function App() {
     setCertificateDescription('');
     setCertificateDate('');
     setFileImg(null);
-    setFileUploaded(true);
   };
 
   useEffect(() => {
@@ -168,7 +168,7 @@ export function App() {
                 Adicionar Atestado
               </LoadingButton>
             </form>
-            {fileUploaded && certificateHash &&  (
+            {certificateHash && fileReady && (
               <Typography variant="body1" sx={{ mt: 2 }}>
                 Link para acessar o atestado:{' '}
                 <Link href={`https://ipfs.io/ipfs/${certificateHash}`} target="_blank" rel="noopener">
