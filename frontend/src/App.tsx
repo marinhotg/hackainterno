@@ -84,7 +84,6 @@ export function App() {
     },
     onSuccess(data) {
       console.log('Deu certo!', data)
-      setFileReady(true)
     },
   })
 
@@ -102,11 +101,12 @@ export function App() {
     setPatientName('');
     setCertificateDescription('');
     setCertificateDate('');
+    setFileReady(true)
     setFileImg(null);
   };
 
   useEffect(() => {
-    if (!waitCertificate.isLoading && waitCertificate.isLoading !== undefined) {
+    if (!waitCertificate.isLoading && waitCertificate.isLoading !== undefined && fileImg) {
       wipeForms();
     }
   }, [waitCertificate.isLoading]);
